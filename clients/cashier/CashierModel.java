@@ -6,9 +6,27 @@ import debug.DEBUG;
 import middle.*;
 
 import java.util.Observable;
-
 /**
- * Implements the Model of the cashier client
+ * Implements the model for the cashier client. This class handles the core
+ * business logic, such as checking product availability, purchasing products,
+ * and processing orders.
+ *
+ * <h2>Key Responsibilities:</h2>
+ * <ul>
+ *   <li>Manages the current state of the cashier operations.</li>
+ *   <li>Interacts with the stock system to check product availability and purchase items.</li>
+ *   <li>Handles the customer's basket and processes orders.</li>
+ * </ul>
+ *
+ * @see Basket
+ * @see Product
+ * @see Observable
+ * @see MiddleFactory
+ * @see StockReadWriter
+ * @see OrderProcessing
+ * @author
+ * Liz Tipper
+ * @version 1.0
  */
 public class CashierModel extends Observable
 {
@@ -54,18 +72,18 @@ public class CashierModel extends Observable
    * Check if the product is in Stock
    * @param productNum The product number
    */
-  public void doCheck(String productNum )
+  public void doCheck(String productNum, int buyQuantity )
   {
     String theAction = "";
     theState  = State.process;                  // State process
     pn  = productNum.trim();                    // Product no.
-    int    amount  = 1;                         //  & quantity
+    //int    amount  = 1;                         //  & quantity
     try
     {
       if ( theStock.exists( pn ) )              // Stock Exists?
       {                                         // T
         Product pr = theStock.getDetails(pn);   //  Get details
-        if ( pr.getQuantity() >= amount )       //  In stock?
+        if ( pr.getQuantity() >= 1 )       //  In stock?
         {                                       //  T
           theAction =                           //   Display 
             String.format( "%s : %7.2f (%2d) ", //
@@ -73,7 +91,7 @@ public class CashierModel extends Observable
               pr.getPrice(),                    //    price
               pr.getQuantity() );               //    quantity     
           theProduct = pr;                      //   Remember prod.
-          theProduct.setQuantity( amount );     //    & quantity
+          theProduct.setQuantity( buyQuantity );     //    & quantity
           theState = State.checked;             //   OK await BUY 
         } else {                                //  F
           theAction =                           //   Not in Stock

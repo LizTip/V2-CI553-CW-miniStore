@@ -15,8 +15,8 @@ import java.util.Map;
 /**
  * Facade for the order processing handling which is implemented on the middle tier.
  * This code is incomplete
- * @author  Mike Smith University of Brighton
- * @version 2.0
+ * @author  Liz Tipper
+ * @version 1.0
  */
 
 public class F_Order implements OrderProcessing
@@ -28,26 +28,26 @@ public class F_Order implements OrderProcessing
   {
     theOrderURL = url;
   }
-  
+
   private void connect() throws OrderException
   {
     try                                            // Setup
     {                                              //  connection
       aR_Order =                                   //  Connect to
-       (RemoteOrder_I) Naming.lookup(theOrderURL); // Stub returned
+              (RemoteOrder_I) Naming.lookup(theOrderURL); // Stub returned
     }
     catch ( Exception e )                          // Failure to
     {                                              //  attach to the
       aR_Order = null;
-      throw new OrderException( "Com: " + 
-                               e.getMessage()  );  //  object
-      
+      throw new OrderException( "Com: " +
+              e.getMessage()  );  //  object
+
     }
   }
 
 
   public void newOrder( Basket bought )
-         throws OrderException
+          throws OrderException
   {
     DEBUG.trace("F_Order:newOrder()" );
     try
@@ -62,7 +62,7 @@ public class F_Order implements OrderProcessing
   }
 
   public int uniqueNumber()
-         throws OrderException
+          throws OrderException
   {
     DEBUG.trace("F_Order:uniqueNumber()" );
     try
@@ -83,7 +83,7 @@ public class F_Order implements OrderProcessing
    */
 
   public synchronized Basket getOrderToPack()
-         throws OrderException
+          throws OrderException
   {
     DEBUG.trace("F_Order:getOrderTioPack()" );
     try
@@ -104,7 +104,7 @@ public class F_Order implements OrderProcessing
    */
 
   public synchronized boolean informOrderPacked( int orderNum )
-         throws OrderException
+          throws OrderException
   {
     DEBUG.trace("F_Order:informOrderPacked()" );
     try
@@ -124,7 +124,7 @@ public class F_Order implements OrderProcessing
    */
 
   public synchronized boolean informOrderCollected( int orderNum )
-         throws OrderException
+          throws OrderException
   {
     DEBUG.trace("F_Order:informOrderCollected()" );
     try
@@ -143,7 +143,7 @@ public class F_Order implements OrderProcessing
    */
 
   public synchronized Map<String, List<Integer> > getOrderState()
-         throws OrderException
+          throws OrderException
   {
     DEBUG.trace("F_Order:getOrderState()" );
     try

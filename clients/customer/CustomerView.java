@@ -1,10 +1,9 @@
 package clients.customer;
 
-import catalogue.Basket;
-import catalogue.BetterBasket;
-import clients.Picture;
+import clients.packing.Picture;
 import middle.MiddleFactory;
 import middle.StockReader;
+import clients.customer.CustomerController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,120 +14,108 @@ import java.util.Observer;
  * Implements the Customer view.
  */
 
-public class CustomerView implements Observer
-{
-  class Name                              // Names of buttons
-  {
-    public static final String CHECK  = "Check";
-    public static final String CLEAR  = "Clear";
-  }
+public class CustomerView implements Observer {
 
   private static final int H = 300;       // Height of window pixels
-  private static final int W = 400;       // Width  of window pixels
+  private static final int W = 400;       // Width of window pixels
 
-  private final JLabel      pageTitle  = new JLabel();
-  private final JLabel      theAction  = new JLabel();
-  private final JTextField  theInput   = new JTextField();
-  private final JTextArea   theOutput  = new JTextArea();
-  private final JScrollPane theSP      = new JScrollPane();
-  private final JButton     theBtCheck = new JButton( Name.CHECK );
-  private final JButton     theBtClear = new JButton( Name.CLEAR );
+  private final JLabel pageTitle = new JLabel();
+  private final JLabel theAction = new JLabel();
+  private final JTextField theInput = new JTextField();
+  private final JTextArea theOutput = new JTextArea();
+  private final JScrollPane theSP = new JScrollPane();
+  private final JButton theBtCheck = new JButton("Check");
+  private final JButton theBtClear = new JButton("Clear");
 
-  private Picture thePicture = new Picture(80,80);
-  private StockReader theStock   = null;
-  private CustomerController cont= null;
+  private Picture thePicture = new Picture(80, 80);
+  private StockReader theStock = null;
+  private CustomerController cont = null;
 
   /**
    * Construct the view
    * @param rpc   Window in which to construct
    * @param mf    Factor to deliver order and stock objects
-   * @param x     x-cordinate of position of window on screen 
-   * @param y     y-cordinate of position of window on screen  
+   * @param x     x-cordinate of position of window on screen
+   * @param y     y-cordinate of position of window on screen
    */
-  
-  public CustomerView( RootPaneContainer rpc, MiddleFactory mf, int x, int y )
-  {
-    try                                             // 
-    {      
-      theStock  = mf.makeStockReader();             // Database Access
-    } catch ( Exception e )
-    {
-      System.out.println("Exception: " + e.getMessage() );
+  public CustomerView(RootPaneContainer rpc, MiddleFactory mf, int x, int y) {
+    try {
+      theStock = mf.makeStockReader();  // Database Access
+    } catch (Exception e) {
+      System.out.println("Exception: " + e.getMessage());
     }
-    Container cp         = rpc.getContentPane();    // Content Pane
-    Container rootWindow = (Container) rpc;         // Root Window
-    cp.setLayout(null);                             // No layout manager
-    rootWindow.setSize( W, H );                     // Size of Window
-    rootWindow.setLocation( x, y );
 
-    Font f = new Font("Monospaced",Font.PLAIN,12);  // Font f is
-    
-    pageTitle.setBounds( 110, 0 , 270, 20 );       
-    pageTitle.setText( "Search products" );                        
-    cp.add( pageTitle );
+    Container cp = rpc.getContentPane();
+    Container rootWindow = (Container) rpc;
+    cp.setLayout(null);
+    rootWindow.setSize(W, H);
+    rootWindow.setLocation(x, y);
 
-    theBtCheck.setBounds( 16, 25+60*0, 80, 40 );    // Check button
-    theBtCheck.addActionListener(                   // Call back code
-      e -> cont.doCheck( theInput.getText() ) );
-    cp.add( theBtCheck );                           //  Add to canvas
+    Font f = new Font("Monospaced", Font.PLAIN, 12);
 
-    theBtClear.setBounds( 16, 25+60*1, 80, 40 );    // Clear button
-    theBtClear.addActionListener(                   // Call back code
-      e -> cont.doClear() );
-    cp.add( theBtClear );                           //  Add to canvas
+    pageTitle.setBounds(110, 0, 270, 20);
+    pageTitle.setText("Search products");
+    pageTitle.setToolTipText("Displays the page title for the search functionality");
+    cp.add(pageTitle);
 
-    theAction.setBounds( 110, 25 , 270, 20 );       // Message area
-    theAction.setText( " " );                       // blank
-    cp.add( theAction );                            //  Add to canvas
+    theInput.setToolTipText("Enter the product number here");
+    theInput.setBounds(110, 50, 270, 40);
+    cp.add(theInput);
 
-    theInput.setBounds( 110, 50, 270, 40 );         // Product no area
-    theInput.setText("");                           // Blank
-    cp.add( theInput );                             //  Add to canvas
-    
-    theSP.setBounds( 110, 100, 270, 160 );          // Scrolling pane
-    theOutput.setText( "" );                        //  Blank
-    theOutput.setFont( f );                         //  Uses font  
-    cp.add( theSP );                                //  Add to canvas
-    theSP.getViewport().add( theOutput );           //  In TextArea
+    theAction.setToolTipText("Displays system messages such as search results or errors");
+    theAction.setBounds(110, 25, 270, 20);
+    theAction.setText(" ");
+    cp.add(theAction);
 
-    thePicture.setBounds( 16, 25+60*2, 80, 80 );   // Picture area
-    cp.add( thePicture );                           //  Add to canvas
+    theBtCheck.setToolTipText("Click to check the product details");
+    theBtCheck.setBounds(16, 25 + 60 * 0, 80, 40);
+    theBtCheck.addActionListener(e -> {
+      if (cont != null) {
+        cont.doCheck(theInput.getText(), 1);
+      }
+    });
+    cp.add(theBtCheck);
+
+    theBtClear.setToolTipText("Click to clear the input fields");
+    theBtClear.setBounds(16, 25 + 60 * 1, 80, 40);
+    theBtClear.addActionListener(e -> {
+      if (cont != null) {
+        cont.doClear();
+      }
+    });
+    cp.add(theBtClear);
+
+    theSP.setBounds(110, 100, 270, 160);
+    theOutput.setText("");
+    theOutput.setFont(f);
+    cp.add(theSP);
+    theSP.getViewport().add(theOutput);
+
+    thePicture.setBounds(16, 25 + 60 * 2 - 10, 80, 80);
+    thePicture.setToolTipText("Displays the image of the selected product");
+    cp.add(thePicture);
     thePicture.clear();
-    
-    rootWindow.setVisible( true );                  // Make visible);
-    theInput.requestFocus();                        // Focus is here
+
+    rootWindow.setVisible(true);
+    theInput.requestFocus();
   }
 
-   /**
-   * The controller object, used so that an interaction can be passed to the controller
-   * @param c   The controller
-   */
-
-  public void setController( CustomerController c )
-  {
+  public void setController(CustomerController c) {
     cont = c;
   }
 
-  /**
-   * Update the view
-   * @param modelC   The observed model
-   * @param arg      Specific args 
-   */
-   
-  public void update( Observable modelC, Object arg )
-  {
-    CustomerModel model  = (CustomerModel) modelC;
-    String        message = (String) arg;
-    theAction.setText( message );
-    ImageIcon image = model.getPicture();  // Image of product
-    if ( image == null )
-    {
-      thePicture.clear();                  // Clear picture
+  @Override
+  public void update(Observable modelC, Object arg) {
+    clients.customer.CustomerModel model = (clients.customer.CustomerModel) modelC;
+    String message = (String) arg;
+    theAction.setText(message);
+    ImageIcon image = model.getPicture();
+    if (image == null) {
+      thePicture.clear();
     } else {
-      thePicture.set( image );             // Display picture
+      thePicture.set(image);
     }
-    theOutput.setText( model.getBasket().getDetails() );
-    theInput.requestFocus();               // Focus is here
+    theOutput.setText(model.getBasket().getDetails());
+    theInput.requestFocus();
   }
-
 }
